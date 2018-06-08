@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "uuid"
-version = "0.1.0-1"
+version = "0.2-1"
 -- LuaDist source
 source = {
-  tag = "0.1.0-1",
+  tag = "0.2-1",
   url = "git://github.com/LuaDist-testing/uuid.git"
 }
 -- Original source
 -- source = {
---     url = "https://github.com/Tieske/uuid/archive/version_0.1.0.tar.gz",
---     dir = "uuid-version_0.1.0",
+--     url = "https://github.com/Tieske/uuid/archive/version_0.2.0.tar.gz",
+--     dir = "uuid-version_0.2.0",
 -- }
 description = {
     summary = "Generates uuids in pure Lua",

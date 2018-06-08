@@ -12,12 +12,14 @@ describe("Testing uuid library", function()
   end)
 
   it("tests the format of the generated uuid", function()
-    local u = uuid()
-    assert.are_equal("-", u:sub(9,9))
-    assert.are_equal("-", u:sub(14,14))
-    assert.are_equal("-", u:sub(19,19))
-    assert.are_equal("-", u:sub(24,24))
-    assert.are_equal(36, #u)
+    for i = 1, 1000 do    -- some where to short, see issue #1, so test a bunch
+      local u = uuid()
+      assert.are_equal("-", u:sub(9,9))
+      assert.are_equal("-", u:sub(14,14))
+      assert.are_equal("-", u:sub(19,19))
+      assert.are_equal("-", u:sub(24,24))
+      assert.are_equal(36, #u)
+    end
   end)
   
   it("tests the hwaddr parameter" , function()
@@ -30,15 +32,27 @@ describe("Testing uuid library", function()
     assert.not_has_error(function() uuid("1234567890123") end)  -- oversize
   end)
   
-  it("tests using luasocket gettime() if available", function()
+  it("tests uuid.seed() using luasocket gettime() if available, os.time() if unavailable", function()
     -- create a fake socket module with a spy.
     local ls = { gettime = spy.new(function() return 123.123 end) }
     package.loaded["socket"] = ls
-    -- clear loaded uuid module, and reload
-    package.loaded["uuid"] = nil
-    uuid = require("uuid")
-    -- now check whether our gettime() function was called
+    uuid.seed()
+    package.loaded["socket"] = nil
     assert.spy(ls.gettime).was.called(1)
+    
+    -- do again with os.time()
+    local ot = os.time
+    os.time = spy.new(os.time)
+    uuid.seed()
+    assert.spy(os.time).was.called(1)
+    os.time = ot
+    
+  end)
+
+  it("tests uuid.randomseed() to properly limit the provided value", function()
+    local bitsize = 32
+    assert.are.equal(12345, uuid.randomseed(12345))
+    assert.are.equal(12345, uuid.randomseed(12345 + 2^bitsize))
   end)
   
 end)
